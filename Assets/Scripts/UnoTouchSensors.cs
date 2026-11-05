@@ -5,19 +5,16 @@ using System.Threading;
 using UnityEngine;
 using System.Linq;
 
-// Reads five digital pin states (0 or 1) from Arduino via Serial.
 public class UnoTouchSensors : MonoBehaviour
 {
     [Header("Serial Settings")]
-    public string portName = "/dev/cu.usbmodem1301"; // Change to your Arduino port
+    public string portName = "/dev/cu.usbmodem1301"; 
     public int baudRate = 9600;
     public int readTimeoutMs = 100;
 
     [Header("Live Sensor States (0 or 1)")]
-    // R, Y, B, W, K states in order. Max 5 elements.
     public int[] sensorStates = new int[5];
 
-    // Internal Serial Communication State
     SerialPort _port;
     Thread _readerThread;
     volatile bool _runReader;
@@ -42,10 +39,8 @@ public class UnoTouchSensors : MonoBehaviour
             _lastError = null;
         }
 
-        // Drain queued lines; parse the most recent valid one
         while (_lines.TryDequeue(out var line))
         {
-            // Expected format: 1,0,0,0,1
             var parts = line.Split(',');
             
             if (parts.Length == 5 && parts.All(p => int.TryParse(p.Trim(), out _)))
@@ -58,8 +53,6 @@ public class UnoTouchSensors : MonoBehaviour
             }
         }
     }
-
-    // --- Port Management Methods (Copied/Adapted from previous example) ---
 
     void TryOpenPort()
     {
